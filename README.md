@@ -1,87 +1,88 @@
-# symfony-docker-environment
-This template provides a Dockerized environment ready to use as an initial starting point for Symfony projects. It contains predefined configurations for Nginx, PHP, and PostgreSQL services. The repository structure is as follows:
+Symfony Demo Application
+========================
+
+The "Symfony Demo Application" is a reference application created to show how
+to develop applications following the [Symfony Best Practices][1].
+
+You can also learn about these practices in [the official Symfony Book][5].
+
+Requirements
+------------
+
+  * PHP 8.1.0 or higher;
+  * PDO-SQLite PHP extension enabled;
+  * and the [usual Symfony application requirements][2].
+
+Installation
+------------
+
+There are 3 different ways of installing this project depending on your needs:
+
+**Option 1.** [Download Symfony CLI][4] and use the `symfony` binary installed
+on your computer to run this command:
+
+```bash
+$ symfony new --demo my_project
 ```
-.
-├── Makefile
-├── README.md
-├── docker
-│   ├── nginx
-│   │   ├── Dockerfile
-│   │   └── config
-│   │       ├── default.conf
-│   │       └── nginx.conf
-│   └── php
-│       ├── Dockerfile
-│       └── config
-│           ├── php_dev.ini
-│           ├── php_prod.ini
-│           ├── supervisor.conf
-│           └── www.conf
-├── docker-compose.override.yml
-├── docker-compose.yml
+
+**Option 2.** [Download Composer][6] and use the `composer` binary installed
+on your computer to run these commands:
+
+```bash
+# you can create a new project based on the Symfony Demo project...
+$ composer create-project symfony/symfony-demo my_project
+
+# ...or you can clone the code repository and install its dependencies
+$ git clone https://github.com/symfony/demo.git my_project
+$ cd my_project/
+$ composer install
 ```
 
-## Makefile
+**Option 3.** Click the following button to deploy this project on Platform.sh,
+the official Symfony PaaS, so you can try it without installing anything locally:
 
-The Makefile contains utility commands to build and operate the project. You can use `make [command]` to execute the commands defined in this file. Here's a description of each command:
-- `make init`: Initializes the project. It will erase any existing containers, rebuild them, and start them. It will also install the composer dependencies.
-- `make start`: Starts the containers.
-- `make stop`: Stops the containers.
-- `make build`: Rebuilds all the containers.
-- `make restart`: Restarts the containers.
-- `make erase`: Erases all the containers.
-- `make composer-install`: Installs the project dependencies.
-- `make bash`: Runs a shell in the PHP container.
-- `make code-style`: Runs php-cs to fix the code style following the Symfony rules.
+<p align="center">
+<a href="https://console.platform.sh/projects/create-project?template=https://raw.githubusercontent.com/symfonycorp/platformsh-symfony-template-metadata/main/symfony-demo.template.yaml&utm_content=symfonycorp&utm_source=github&utm_medium=button&utm_campaign=deploy_on_platform"><img src="https://platform.sh/images/deploy/lg-blue.svg" alt="Deploy on Platform.sh" width="180px" /></a>
+</p>
 
-## Docker Compose
+Usage
+-----
 
-- `docker-compose.yml`: This file defines the nginx and php services that will be used in production. It exposes port 80 for accessing the nginx server.
+There's no need to configure anything before running the application. There are
+2 different ways of running this application depending on your needs:
 
-- `docker-compose.override.yml`: This file adds a postgres database service for local development and changes the configuration of the nginx and php services to fit the development environment. It exposes port 8081 for accessing the nginx server.
+**Option 1.** [Download Symfony CLI][4] and run this command:
 
-## Docker
+```bash
+$ cd my_project/
+$ symfony serve
+```
 
-This directory contains the Dockerfiles and configuration for nginx and php.
+Then access the application in your browser at the given URL (<https://localhost:8000> by default).
 
-### nginx
+**Option 2.** Use a web server like Nginx or Apache to run the application
+(read the documentation about [configuring a web server for Symfony][3]).
 
-The nginx Dockerfile is used to create an image that runs nginx. The image is based on `nginx:1.19-alpine`.
+On your local machine, you can run this command to use the built-in PHP web server:
 
-The nginx configuration is split into two files:
+```bash
+$ cd my_project/
+$ php -S localhost:8000 -t public/
+```
 
-- `nginx.conf`: Global nginx configuration.
-- `default.conf`: Server-specific configuration used for the API.
+Tests
+-----
 
-### php
+Execute this command to run tests:
 
-The php Dockerfile is used to create three images:
+```bash
+$ cd my_project/
+$ ./bin/phpunit
+```
 
-- `base`: Installs necessary dependencies and configures the environment to run the Symfony API.
-- `dev`: Extends the `base` image and adds XDebug for debugging.
-- `prod`: Extends the `base` image, optimizes for production.
-
-The PHP and PHP-FPM configuration is split into several files:
-
-- `php_dev.ini`: PHP configuration for the development environment.
-- `php_prod.ini`: PHP configuration optimized for production.
-- `www.conf`: PHP-FPM pool configuration.
-- `supervisor.conf`: Configuration for supervisord, which is used to manage the PHP-FPM process.
-
-## How to Use
-
-Once you have cloned the repository and navigated to the project directory, follow the steps below to start a new Symfony project:
-
-1. **Build the Docker environment**: Use the command `make init`. This command will build and start the Docker containers. It also installs the composer dependencies.
-
-2. **Access the PHP container**: Use the command `make bash`. This will open a shell in the PHP container, where you can execute Symfony and Composer commands.
-
-3. **Create a new Symfony project**: Use the command `symfony new --dir=api --no-git --version=6.3`. This will create a new Symfony 6.3 project in the `api` directory. The `--no-git` flag is used because the Symfony installer would otherwise initialize a new Git repository, and we already have one.
-
-4. **Move the Symfony files**: Use the command `mv api/* . && mv api/.* .`. This will move all the files from the `api` directory to the project root. It will also move the hidden files (`.env`, `.gitignore`, etc).
-
-5. **Remove the `api` directory**: Use the command `rm -rf api`. This will remove the `api` directory that is no longer needed.
-
-6. **Build the Docker environment**: Use the command `make restart`. This command will rebuild the Docker containers.
-
-7. **Verify the installation**: You can verify that Symfony is installed correctly by accessing `http://localhost:8081` in your browser. You should see the Symfony welcome page.
+[1]: https://symfony.com/doc/current/best_practices.html
+[2]: https://symfony.com/doc/current/setup.html#technical-requirements
+[3]: https://symfony.com/doc/current/setup/web_server_configuration.html
+[4]: https://symfony.com/download
+[5]: https://symfony.com/book
+[6]: https://getcomposer.org/
